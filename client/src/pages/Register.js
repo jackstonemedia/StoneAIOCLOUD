@@ -156,7 +156,7 @@ export class RegisterPage {
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       if (confirmInput.value !== passInput.value) {
         confirmInput.classList.add('error');
         toast.error('Passwords do not match.');
@@ -170,8 +170,8 @@ export class RegisterPage {
 
       try {
         const res = await authAPI.register(data);
-        
-        store.set('token', res.token);
+
+        store.set('token', res.accessToken);
         store.set('refreshToken', res.refreshToken);
         store.set('user', res.user);
 
@@ -189,7 +189,7 @@ export class RegisterPage {
     btn.disabled = true;
     btn.classList.add('loading');
     this.messageIdx = 0;
-    
+
     const updateMsg = () => {
       btn.innerHTML = `<div class="auth-loading-msg">${this.loadingMessages[this.messageIdx]}</div>`;
       this.messageIdx = (this.messageIdx + 1) % this.loadingMessages.length;

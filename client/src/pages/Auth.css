@@ -14,15 +14,22 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 20% 30%, rgba(200, 151, 60, 0.05) 0%, transparent 50%),
-              radial-gradient(circle at 80% 70%, rgba(79, 163, 224, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 80% 70%, rgba(79, 163, 224, 0.05) 0%, transparent 50%);
   animation: auth-bg-shift 8s ease-in-out infinite alternate;
   pointer-events: none;
   z-index: 0;
 }
 
 @keyframes auth-bg-shift {
-  0% { opacity: 0.3; transform: scale(1); }
-  100% { opacity: 0.7; transform: scale(1.1); }
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
 }
 
 /* LEFT SIDE - BRAND STORY */
@@ -164,11 +171,25 @@
   animation: auth-fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.auth-field:nth-child(1) { animation-delay: 0.12s; }
-.auth-field:nth-child(2) { animation-delay: 0.16s; }
-.auth-field:nth-child(3) { animation-delay: 0.20s; }
-.auth-field:nth-child(4) { animation-delay: 0.24s; }
-.auth-field:nth-child(5) { animation-delay: 0.28s; }
+.auth-field:nth-child(1) {
+  animation-delay: 0.12s;
+}
+
+.auth-field:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.auth-field:nth-child(3) {
+  animation-delay: 0.20s;
+}
+
+.auth-field:nth-child(4) {
+  animation-delay: 0.24s;
+}
+
+.auth-field:nth-child(5) {
+  animation-delay: 0.28s;
+}
 
 .auth-label {
   font-size: 11px;
@@ -189,16 +210,16 @@
   border-radius: var(--radius);
   padding: 12px 16px;
   color: var(--text);
-  font-family: inherit;
+  font-family: 'DM Mono', monospace;
   font-size: 14px;
-  transition: all var(--transition);
+  transition: all 150ms ease;
 }
 
 .auth-input:focus {
   border-color: var(--accent);
   background: var(--bg3);
   outline: none;
-  box-shadow: 0 0 0 1px var(--accent-g2);
+  box-shadow: 0 0 0 2px var(--accent-g), 0 0 0 4px var(--bg);
 }
 
 .auth-input.error {
@@ -213,7 +234,7 @@
   animation: auth-slide-in 0.2s ease-out;
 }
 
-.auth-input.error + .auth-error-msg {
+.auth-input.error+.auth-error-msg {
   display: block;
 }
 
@@ -296,10 +317,24 @@
 }
 
 /* Strength Colors */
-.strength-1 .strength-bar:nth-child(1) { background: var(--err); }
-.strength-2 .strength-bar:nth-child(1), .strength-2 .strength-bar:nth-child(2) { background: var(--warn); }
-.strength-3 .strength-bar:nth-child(1), .strength-3 .strength-bar:nth-child(2), .strength-3 .strength-bar:nth-child(3) { background: var(--warn); }
-.strength-4 .strength-bar { background: var(--success); }
+.strength-1 .strength-bar:nth-child(1) {
+  background: var(--err);
+}
+
+.strength-2 .strength-bar:nth-child(1),
+.strength-2 .strength-bar:nth-child(2) {
+  background: var(--warn);
+}
+
+.strength-3 .strength-bar:nth-child(1),
+.strength-3 .strength-bar:nth-child(2),
+.strength-3 .strength-bar:nth-child(3) {
+  background: var(--warn);
+}
+
+.strength-4 .strength-bar {
+  background: var(--success);
+}
 
 /* TERMS */
 .auth-terms {
@@ -335,19 +370,43 @@
 }
 
 @keyframes auth-msg-fade {
-  0%, 100% { opacity: 0; transform: translateY(4px); }
-  20%, 80% { opacity: 1; transform: translateY(0); }
+
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  20%,
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ANIMATIONS */
 @keyframes auth-fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes auth-slide-in {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* MOBILE RESPONSIVE */
@@ -355,6 +414,7 @@
   .auth-left {
     display: none;
   }
+
   .auth-right {
     flex: 1;
   }

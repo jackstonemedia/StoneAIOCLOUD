@@ -5,7 +5,10 @@
 
 import { store } from '../store.js';
 import { router } from '../router.js';
+import { OnboardingPage } from '../pages/Onboarding.js';
+import { ChatPanel } from '../pages/ChatPanel.js';
 import { CommandPalette } from './CommandPalette.js';
+import './AppShell.css';
 
 export class AppShell {
   constructor() {
@@ -13,8 +16,6 @@ export class AppShell {
     this.activePanelName = null;
     this.isSidebarExpanded = store.get('sidebarOpen') || false;
     this.isNotifOpen = false;
-    this.commandPalette = new CommandPalette();
-    
     this.init();
   }
 
@@ -23,10 +24,14 @@ export class AppShell {
     this.setupEventListeners();
     this.setupKeyboardShortcuts();
     this.syncWithStore();
-    
+
+    // Register Panels
+    this.registerPanel('chat', new ChatPanel());
+    // this.registerPanel('files', new FilesPanel()); etc.
+
     // Mount Command Palette
     this.commandPalette.mount(document.getElementById('command-palette-overlay'));
-    
+
     // Initial route sync
     this.handleRouteChange(router.currentRoute);
   }
@@ -187,7 +192,7 @@ export class AppShell {
       this.isSidebarExpanded = !this.isSidebarExpanded;
       sidebar.classList.toggle('expanded', this.isSidebarExpanded);
       store.set('sidebarOpen', this.isSidebarExpanded);
-      
+
       // Rotate icon
       toggleIcon.style.transform = this.isSidebarExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
     });
@@ -277,7 +282,7 @@ export class AppShell {
   handleRouteChange(data) {
     if (!data) return;
     const { route, params } = data;
-    
+
     // Update active nav item
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
@@ -304,7 +309,7 @@ export class AppShell {
     panelEl.className = `panel panel-${name}`;
     panelEl.id = `panel-${name}`;
     container.appendChild(panelEl);
-    
+
     instance.mount(panelEl);
   }
 

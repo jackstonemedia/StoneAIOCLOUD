@@ -130,8 +130,8 @@ export class LoginPage {
 
       try {
         const data = await authAPI.login({ email, password });
-        
-        store.set('token', data.token);
+
+        store.set('token', data.accessToken);
         store.set('refreshToken', data.refreshToken);
         store.set('user', data.user);
 
@@ -140,7 +140,7 @@ export class LoginPage {
       } catch (error) {
         console.error('Login failed:', error);
         toast.error(error.message || 'Invalid email or password.');
-        
+
         // Highlight fields
         form.querySelectorAll('.auth-input').forEach(i => i.classList.add('error'));
       } finally {

@@ -28,11 +28,11 @@ export default defineConfig({
     open: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:3000',
         changeOrigin: true
       },
       '/terminal': {
-        target: 'ws://localhost:3001',
+        target: 'ws://localhost:3000',
         ws: true
       }
     }
