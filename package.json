@@ -7,7 +7,7 @@
     "dev": "concurrently \"vite -c client/vite.config.js\" \"tsx watch server/index.ts\"",
     "start": "node dist/server/index.js",
     "db:migrate": "tsx server/db/index.ts",
-    "build": "vite build -c client/vite.config.js",
+    "build": "vite build -c client/vite.config.js && tsc -p tsconfig.server.json",
     "preview": "vite preview -c client/vite.config.js",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
