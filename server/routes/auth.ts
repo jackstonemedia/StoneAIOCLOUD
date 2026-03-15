@@ -8,6 +8,7 @@ import { authLimiter } from '../middleware/rateLimit.js';
 import { jobQueue } from '../services/jobQueue.js';
 import { emailService } from '../services/emailService.js';
 import { smsService } from '../services/smsService.js';
+import { logger } from '../lib/logger.js';
 import rateLimit from 'express-rate-limit';
 
 const router = Router();
@@ -46,30 +47,30 @@ router.post('/register', authLimiter, async (req, res, next) => {
     const { email, password, name } = req.body;
 
     if (!email || !password || !name) {
-      return res.status(400).json({ error: 'Missing required fields', code: 'MISSING_FIELDS', statusCode: 400 });
+      return res.status(400).json({ message: 'Missing required fields', error: 'Missing required fields', code: 'MISSING_FIELDS', statusCode: 400 });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Invalid email format', code: 'INVALID_EMAIL', statusCode: 400 });
+      return res.status(400).json({ message: 'Invalid email format', error: 'Invalid email format', code: 'INVALID_EMAIL', statusCode: 400 });
     }
 
     if (!isStrongPassword(password)) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters long and contain uppercase, lowercase, and numbers', code: 'WEAK_PASSWORD', statusCode: 400 });
+      return res.status(400).json({ message: 'Password must be at least 8 characters with uppercase, lowercase, and numbers', error: 'Weak password', code: 'WEAK_PASSWORD', statusCode: 400 });
     }
 
     const db = getDb();
-    
+
     // Check if email exists
     const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (existingUser) {
-      return res.status(409).json({ error: 'Email already in use', code: 'EMAIL_EXISTS', statusCode: 409 });
+      return res.status(409).json({ message: 'Email already in use', error: 'Email already in use', code: 'EMAIL_EXISTS', statusCode: 409 });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
     const subdomain = generateSubdomain(name);
     const inboundEmail = `${subdomain}@mail.stoneaio.com`;
-    
+
     const verifyToken = crypto.randomBytes(32).toString('hex');
     const verifyTokenHash = crypto.createHash('sha256').update(verifyToken).digest('hex');
     const verifyExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
@@ -92,9 +93,9 @@ router.post('/register', authLimiter, async (req, res, next) => {
     db.prepare('INSERT INTO tokens (user_id, type, token) VALUES (?, ?, ?)')
       .run(user.id, 'refresh', refreshToken);
 
-    // Send welcome email
-    await emailService.sendWelcomeEmail(user.email, user.name);
-    await emailService.sendEmailVerification(user.email, verifyToken);
+    // Send welcome email (fire-and-forget — don't block registration)
+    emailService.sendWelcomeEmail(user.email, user.name).catch(e => logger.warn('Welcome email failed:', e));
+    emailService.sendEmailVerification(user.email, verifyToken).catch(e => logger.warn('Verification email failed:', e));
 
     res.status(201).json({ user, accessToken, refreshToken });
   } catch (err) {
@@ -108,19 +109,19 @@ router.post('/login', authLimiter, async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Missing email or password', code: 'MISSING_CREDENTIALS', statusCode: 400 });
+      return res.status(400).json({ message: 'Missing email or password', error: 'Missing email or password', code: 'MISSING_CREDENTIALS', statusCode: 400 });
     }
 
     const db = getDb();
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as any;
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password', code: 'INVALID_CREDENTIALS', statusCode: 401 });
+      return res.status(401).json({ message: 'Invalid email or password', error: 'Invalid email or password', code: 'INVALID_CREDENTIALS', statusCode: 401 });
     }
 
     const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid) {
-      return res.status(401).json({ error: 'Invalid email or password', code: 'INVALID_CREDENTIALS', statusCode: 401 });
+      return res.status(401).json({ message: 'Invalid email or password', error: 'Invalid email or password', code: 'INVALID_CREDENTIALS', statusCode: 401 });
     }
 
     const { accessToken, refreshToken } = generateTokens({ id: user.id, email: user.email, plan: user.plan });
@@ -169,9 +170,9 @@ router.post('/refresh', async (req, res, next) => {
     try {
       const decoded = verifyRefreshToken(refreshToken) as any;
       const user = db.prepare('SELECT id, email, plan FROM users WHERE id = ?').get(decoded.id) as any;
-      
+
       if (!user) {
-         return res.status(401).json({ error: 'User not found', code: 'USER_NOT_FOUND', statusCode: 401 });
+        return res.status(401).json({ error: 'User not found', code: 'USER_NOT_FOUND', statusCode: 401 });
       }
 
       const tokens = generateTokens({ id: user.id, email: user.email, plan: user.plan });
@@ -201,7 +202,7 @@ router.post('/logout', requireAuth, async (req: AuthRequest, res, next) => {
     if (refreshToken) {
       db.prepare('DELETE FROM tokens WHERE token = ? AND user_id = ?').run(refreshToken, req.user.id);
     }
-    
+
     if (sessionToken) {
       db.prepare('DELETE FROM sessions WHERE token = ? AND user_id = ?').run(sessionToken, req.user.id);
     }
@@ -258,7 +259,7 @@ router.patch('/me', requireAuth, async (req: AuthRequest, res, next) => {
 
     const db = getDb();
     const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ? RETURNING id, email, name, avatar_url, bio, rules, timezone, phone_number, sms_enabled, email_verified, subdomain, inbound_email, plan, container_status, container_port, is_admin, default_model, default_skill_id, created_at, updated_at`;
-    
+
     const updatedUser = db.prepare(query).get(...values);
 
     res.json(updatedUser);
@@ -323,7 +324,7 @@ router.post('/reset-password', async (req, res, next) => {
     db.transaction(() => {
       db.prepare('UPDATE users SET password_hash = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE id = ?')
         .run(passwordHash, user.id);
-      
+
       // Revoke all sessions and refresh tokens
       db.prepare('DELETE FROM tokens WHERE user_id = ?').run(user.id);
       db.prepare('DELETE FROM sessions WHERE user_id = ?').run(user.id);

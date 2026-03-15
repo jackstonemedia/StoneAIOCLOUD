@@ -9,6 +9,7 @@ export function errorHandler(err: any, req: Request, res: Response, next: NextFu
   const code = err.code || 'INTERNAL_ERROR';
 
   res.status(statusCode).json({
+    message,
     error: message,
     code,
     statusCode,
