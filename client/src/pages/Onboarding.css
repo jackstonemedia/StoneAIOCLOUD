@@ -1,0 +1,582 @@
+/* STONE AIO ONBOARDING CSS */
+
+.onboarding-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+}
+
+/* Animated Background Canvas */
+#onboarding-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Progress Bar */
+.onboarding-progress-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  display: flex;
+  gap: 2px;
+  z-index: 10;
+  background: var(--bg1);
+}
+
+.onboarding-progress-segment {
+  flex: 1;
+  background: var(--bg4);
+  transition: background 300ms ease;
+}
+
+.onboarding-progress-segment.active {
+  background: var(--accent);
+}
+
+/* Main Content Area */
+.onboarding-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+}
+
+/* Step Card Container */
+.onboarding-step {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(14, 14, 12, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  padding: 40px;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(40px);
+  transition: opacity 200ms ease, transform 200ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.onboarding-step.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.onboarding-step.exit {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+/* Typography */
+.onboarding-headline {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.onboarding-sub {
+  font-size: 13px;
+  color: var(--text-m);
+  margin-bottom: 24px;
+}
+
+/* Buttons */
+.onboarding-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 150ms ease;
+  box-shadow: 0 4px 12px rgba(200, 151, 60, 0.2);
+  text-decoration: none;
+}
+
+.onboarding-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(200, 151, 60, 0.3);
+  background: #d4a750;
+}
+
+.onboarding-btn:active {
+  transform: scale(0.98);
+}
+
+.onboarding-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.onboarding-btn.ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+.onboarding-btn.ghost:hover {
+  background: var(--bg3);
+  border-color: var(--text-m);
+}
+
+.onboarding-link {
+  color: var(--text-m);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 150ms ease;
+  cursor: pointer;
+  text-align: center;
+  display: block;
+}
+
+.onboarding-link:hover {
+  color: var(--text);
+}
+
+/* STEP 0: Boot Sequence */
+.boot-terminal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--success);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boot-line {
+  opacity: 0;
+  animation: boot-line-appear 0.1s forwards;
+}
+
+@keyframes boot-line-appear {
+  to { opacity: 1; }
+}
+
+.boot-complete {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+  animation: fade-in 0.5s ease forwards;
+}
+
+.boot-complete.active {
+  display: flex;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* STEP 1: Personalize */
+.personalize-textarea {
+  width: 100%;
+  height: 120px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  resize: none;
+  transition: border-color 150ms ease;
+}
+
+.personalize-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-g2);
+}
+
+.quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.quick-chip {
+  padding: 6px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  color: var(--text-m);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.quick-chip:hover {
+  background: var(--bg4);
+  color: var(--text);
+  border-color: var(--text-m);
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-pill {
+  padding: 8px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text-m);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.skill-pill.selected {
+  background: var(--accent-g);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* STEP 2: Connect Tools */
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tool-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 150ms ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.tool-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(200, 151, 60, 0.04);
+  border-color: var(--border-s);
+}
+
+.tool-card.connected {
+  border-color: var(--accent);
+  background: var(--accent-g);
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tool-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.tool-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.tool-desc {
+  font-size: 11px;
+  color: var(--text-m);
+}
+
+.tool-status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: var(--accent);
+  font-size: 14px;
+  display: none;
+}
+
+.tool-card.connected .tool-status {
+  display: block;
+}
+
+.tools-counter {
+  text-align: center;
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 8px;
+}
+
+/* STEP 3: Try Stone */
+.try-stone-chat {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-msg {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chat-msg.user {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.chat-msg.stone .chat-avatar {
+  background: linear-gradient(135deg, var(--accent), #e0b86e);
+  color: var(--bg);
+}
+
+.chat-msg.user .chat-avatar {
+  background: var(--bg4);
+  color: var(--text-m);
+}
+
+.chat-bubble {
+  background: var(--bg3);
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 85%;
+  color: var(--text);
+}
+
+.chat-msg.user .chat-bubble {
+  background: var(--bg4);
+}
+
+.chat-input-area {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input {
+  flex: 1;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.chat-send {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* STEP 4: Reach Stone Anywhere */
+.reach-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.reach-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.reach-icon {
+  font-size: 32px;
+}
+
+.reach-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.reach-input {
+  width: 100%;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: center;
+}
+
+.reach-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.reach-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-g);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  word-break: break-all;
+}
+
+/* STEP 5: Complete */
+.complete-step {
+  text-align: center;
+  align-items: center;
+}
+
+.complete-headline {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--accent);
+  margin-bottom: 32px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-m);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-value.success {
+  color: var(--success);
+}
+
+/* Confetti */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+}
+
+@keyframes confetti-burst {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.5); opacity: 0; }
+}

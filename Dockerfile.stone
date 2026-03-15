@@ -1,0 +1,33 @@
+FROM ubuntu:22.04
+
+# Avoid tzdata interactive prompt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system packages
+RUN apt-get update && apt-get install -y \
+  nodejs npm python3.11 python3-pip curl wget git vim nano \
+  htop ffmpeg pandoc sqlite3 build-essential jq zip unzip rsync \
+  chromium-browser ca-certificates fonts-liberation \
+  && rm -rf /var/lib/apt/lists/*
+
+# Node 20 via NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
+
+# Python packages
+RUN pip3 install psutil requests flask fastapi uvicorn pandas numpy playwright
+
+# Playwright browsers
+RUN python3 -m playwright install chromium
+
+# Node global packages
+RUN npm install -g pm2 http-server nodemon
+
+# Create stone user
+RUN useradd -m -u 1000 -s /bin/bash stone
+
+# Set working directory
+WORKDIR /home/stone
+USER stone
+
+EXPOSE 3000
+CMD ["/bin/bash"]

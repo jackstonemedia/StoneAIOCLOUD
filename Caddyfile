@@ -1,0 +1,8 @@
+{
+  admin 0.0.0.0:2019
+}
+
+# The main app
+:80, :443 {
+  reverse_proxy stoneaio-app:3000
+}
